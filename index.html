@@ -289,6 +289,21 @@ main { flex: 1; max-width: 700px; margin: 0 auto; padding: 3rem 1.5rem 2rem; wid
   <p class="brand-tagline">Professional Card Grading &amp; Restoration</p>
 </header>
 
+<main>
+  <p class="lookup-eyebrow">Certificate Lookup</p>
+  <p class="lookup-desc">輸入您的專屬代碼以查詢鑑定報告</p>
+
+  <div class="input-wrap">
+    <input class="code-input" id="codeInput" type="text"
+      placeholder="請輸入查詢代碼（例：SH-001）"
+      autocomplete="off" spellcheck="false" />
+    <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
+    <button class="lookup-btn" id="lookupBtn" onclick="doLookup()">查詢</button>
+  </div>
+
+  <p class="status" id="statusMsg"></p>
+  <div id="resultsContainer"></div>
+</main>
 <section class="why-section">
   <div class="why-inner">
     <p class="why-title">為什麼選擇Show卡</p>
@@ -311,22 +326,6 @@ main { flex: 1; max-width: 700px; margin: 0 auto; padding: 3rem 1.5rem 2rem; wid
     </div>
   </div>
 </section>
-
-<main>
-  <p class="lookup-eyebrow">Certificate Lookup</p>
-  <p class="lookup-desc">輸入您的專屬代碼以查詢鑑定報告</p>
-
-  <div class="input-wrap">
-    <input class="code-input" id="codeInput" type="text"
-      placeholder="請輸入查詢代碼（例：SH-001）"
-      autocomplete="off" spellcheck="false" />
-    <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
-    <button class="lookup-btn" id="lookupBtn" onclick="doLookup()">查詢</button>
-  </div>
-
-  <p class="status" id="statusMsg"></p>
-  <div id="resultsContainer"></div>
-</main>
 
 <section class="cta-section">
   <div class="cta-divider">
