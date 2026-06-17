@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show卡修卡 — 專業卡牌鑑定</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold:       #C9A84C;
+  --gold-dim:   #8A6B2A;
+  --gold-pale:  rgba(201,168,76,0.12);
+  --gold-line:  rgba(201,168,76,0.28);
+  --bg:         #0A0A0A;
+  --bg-2:       #111111;
+  --bg-3:       #191919;
+  --bg-4:       #222222;
+  --ink:        #F0EDE6;
+  --ink-mid:    #A8A49C;
+  --ink-dim:    #525050;
+  --green:      #4A8A5A;
+  --green-bg:   rgba(74,138,90,0.12);
+  --red:        #8A4A4A;
+  --red-bg:     rgba(138,74,74,0.12);
+  --line-green: #06C755;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Serif TC', serif;
+  background: var(--bg); color: var(--ink);
+  min-height: 100vh; display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Hero Header ── */
+.site-header {
+  position: relative; text-align: center;
+  padding: 3rem 2rem 2.5rem;
+  border-bottom: 1px solid var(--gold-line);
+  overflow: hidden;
+}
+.header-glow {
+  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+  width: 500px; height: 180px;
+  background: radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.header-ornament { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 1.5rem; }
+.ornament-line { flex: 1; max-width: 100px; height: 1px; background: linear-gradient(to right, transparent, var(--gold-dim)); }
+.ornament-line.right { background: linear-gradient(to left, transparent, var(--gold-dim)); }
+.ornament-diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+.brand-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; letter-spacing: 0.45em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 0.7rem;
+}
+.brand-zh { font-size: 26px; font-weight: 600; letter-spacing: 0.12em; color: var(--ink); margin-bottom: 0.6rem; }
+.brand-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px; color: var(--ink-mid); letter-spacing: 0.12em; font-style: italic;
+}
+
+/* ── Why Us Section ── */
+.why-section {
+  background: var(--bg-2); border-bottom: 1px solid var(--gold-line);
+  padding: 2rem 1.5rem;
+}
+.why-inner { max-width: 700px; margin: 0 auto; }
+.why-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; letter-spacing: 0.35em; color: var(--gold);
+  text-transform: uppercase; text-align: center; margin-bottom: 1.5rem;
+}
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--gold-line); border: 1px solid var(--gold-line); }
+.why-item {
+  background: var(--bg-2); padding: 1.25rem 1rem; text-align: center;
+}
+.why-icon { font-size: 22px; margin-bottom: 0.5rem; }
+.why-label { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.why-desc { font-size: 12px; color: var(--ink-mid); letter-spacing: 0.02em; line-height: 1.5; }
+
+/* ── Main ── */
+main { flex: 1; max-width: 700px; margin: 0 auto; padding: 3rem 1.5rem 2rem; width: 100%; }
+
+.lookup-eyebrow {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; letter-spacing: 0.38em; color: var(--gold);
+  text-transform: uppercase; text-align: center; margin-bottom: 0.5rem;
+}
+.lookup-desc { font-size: 15px; color: var(--ink-mid); text-align: center; font-weight: 300; letter-spacing: 0.04em; margin-bottom: 2rem; }
+
+/* Input */
+.input-wrap { display: flex; border: 1px solid var(--gold-dim); background: var(--bg-2); transition: border-color 0.25s, box-shadow 0.25s; }
+.input-wrap:focus-within { border-color: var(--gold); box-shadow: 0 0 0 1px rgba(201,168,76,0.15), 0 0 20px rgba(201,168,76,0.05); }
+.code-input { flex: 1; border: none; outline: none; padding: 1.2rem 1.5rem; background: transparent; font-family: 'Cormorant Garamond', serif; font-size: 20px; letter-spacing: 0.2em; color: var(--ink); text-transform: uppercase; }
+.code-input::placeholder { color: var(--ink-dim); letter-spacing: 0.05em; font-size: 14px; font-family: 'Noto Serif TC', serif; text-transform: none; }
+.lookup-btn { padding: 1.2rem 2rem; background: var(--gold); color: #0A0A0A; border: none; cursor: pointer; font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; transition: background 0.2s; flex-shrink: 0; }
+.lookup-btn:hover { background: #D4B464; }
+.lookup-btn:disabled { opacity: 0.4; cursor: default; }
+.clear-btn { position: absolute; right: 130px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--ink-dim); font-size: 16px; cursor: pointer; padding: 4px 8px; display: none; line-height: 1; }
+.clear-btn.visible { display: block; }
+.clear-btn:hover { color: var(--ink); }
+.input-wrap { position: relative; }
+
+.status { margin-top: 1rem; text-align: center; font-size: 13px; color: var(--ink-dim); letter-spacing: 0.06em; min-height: 18px; }
+.status.error   { color: #A05050; }
+.status.loading { color: var(--gold-dim); font-family: 'Cormorant Garamond', serif; letter-spacing: 0.15em; }
+
+/* Results */
+#resultsContainer { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+
+/* Summary card */
+.summary-header {
+  border: 1px solid var(--gold-line); background: var(--bg-2);
+  overflow: hidden; animation: riseIn 0.4s cubic-bezier(0.22,1,0.36,1) both;
+  position: relative;
+}
+.summary-accent { height: 2px; background: linear-gradient(90deg, transparent, var(--gold-dim) 30%, var(--gold) 50%, var(--gold-dim) 70%, transparent); }
+.summary-top { display: flex; align-items: center; gap: 1rem; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gold-line); }
+.summary-name { font-size: 20px; font-weight: 600; letter-spacing: 0.05em; }
+.summary-code { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--gold-dim); letter-spacing: 0.15em; margin-left: auto; }
+.summary-count { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 0.2em; color: var(--ink-mid); padding: 0.75rem 1.5rem; text-transform: uppercase; }
+
+/* Month group */
+.month-group { border: 1px solid var(--gold-line); background: var(--bg-2); overflow: hidden; animation: riseIn 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+.month-toggle { width: 100%; display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.5rem; background: var(--bg-3); border: none; cursor: pointer; text-align: left; transition: background 0.2s; }
+.month-toggle:hover { background: var(--bg-4); }
+.month-accent { width: 2px; height: 18px; background: var(--gold); flex-shrink: 0; }
+.month-name { font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: 0.3em; color: #E8D4A0; text-transform: uppercase; font-weight: 600; }
+.month-count { font-family: 'Cormorant Garamond', serif; font-size: 12px; color: var(--ink-dim); letter-spacing: 0.1em; margin-left: auto; }
+.month-arrow { font-size: 10px; color: var(--gold-dim); transition: transform 0.3s; flex-shrink: 0; }
+.month-thumb { width: 36px; height: 48px; object-fit: cover; border: 1px solid var(--gold-line); flex-shrink: 0; }
+.photo-toggle { width: 100%; display: flex; align-items: center; gap: 10px; padding: 0.85rem 1.5rem; background: rgba(201,168,76,0.08); border: none; border-top: 1px solid rgba(201,168,76,0.2); cursor: pointer; text-align: left; transition: background 0.2s; }
+.photo-toggle:hover { background: rgba(201,168,76,0.13); }
+.photo-toggle-icon { font-size: 9px; color: #E8D4A0; flex-shrink: 0; transition: transform 0.3s; }
+.photo-toggle.open .photo-toggle-icon { transform: rotate(90deg); }
+.photo-toggle-label { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.25em; color: #E8D4A0; text-transform: uppercase; font-weight: 600; }
+.photo-toggle-count { font-family: 'Cormorant Garamond', serif; font-size: 11px; color: var(--ink-dim); letter-spacing: 0.1em; margin-left: auto; }
+.photo-panel { display: none; padding: 1rem 1.5rem 1.25rem; border-top: 1px solid rgba(201,168,76,0.06); background: rgba(201,168,76,0.02); }
+.photo-panel.open { display: flex; gap: 12px; flex-wrap: wrap; }
+.photo-panel .card-img-wrap { min-width: 120px; max-width: 160px; flex: 1; }
+.month-toggle.open .month-arrow { transform: rotate(180deg); }
+
+.card-list { display: none; }
+.card-list.open { display: block; }
+
+/* Card row */
+.card-row { border-top: 1px solid rgba(201,168,76,0.08); }
+.card-row-header { width: 100%; display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.5rem; background: transparent; border: none; cursor: pointer; text-align: left; transition: background 0.15s; }
+.card-row-header:hover { background: rgba(201,168,76,0.03); }
+.card-row-name { font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: 0.03em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-row-tags { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: nowrap; }
+.card-tag { font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 0.1em; color: #C8C4BC; white-space: nowrap; }
+.card-tag-sep { color: var(--ink-dim); font-size: 10px; }
+
+/* Grade badge — PSA style */
+.grade-badge {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 48px; height: 48px; border: 1px solid var(--gold-line);
+  background: var(--bg-3); flex-shrink: 0;
+}
+.grade-num { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 300; line-height: 1; color: #E8D4A0; }
+.grade-sub { font-family: 'Cormorant Garamond', serif; font-size: 7px; letter-spacing: 0.2em; color: var(--ink-dim); text-transform: uppercase; margin-top: 2px; }
+
+.payment-badge {
+  font-family: 'Cormorant Garamond', serif; font-size: 10px; letter-spacing: 0.12em;
+  padding: 2px 8px; text-transform: uppercase; flex-shrink: 0; white-space: nowrap;
+}
+.payment-badge.paid   { background: rgba(74,138,90,0.2); color: #7DD98A; border: 1px solid rgba(74,138,90,0.5); }
+.payment-badge.unpaid { background: rgba(138,74,74,0.2); color: #E07A7A; border: 1px solid rgba(138,74,74,0.5); }
+.payment-badge.pending { background: rgba(201,168,76,0.1); color: var(--gold-dim); border: 1px solid rgba(201,168,76,0.25); }
+
+.card-row-arrow { font-size: 10px; color: var(--ink-dim); transition: transform 0.3s; flex-shrink: 0; }
+.card-row-header.open .card-row-arrow { transform: rotate(180deg); }
+
+/* Card detail */
+.card-detail { display: none; padding: 0 1.5rem 1.5rem; }
+.card-detail.open { display: block; }
+.detail-accent { height: 1px; background: var(--gold-line); margin-bottom: 1.25rem; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem 1.5rem; }
+.detail-row { display: flex; flex-direction: column; gap: 5px; }
+.detail-row.full { grid-column: 1 / -1; }
+.detail-label { font-family: 'Cormorant Garamond', serif; font-size: 16px; letter-spacing: 0.25em; color: var(--gold-dim); text-transform: uppercase; }
+.detail-value { font-size: 16px; color: var(--ink); letter-spacing: 0.02em; line-height: 1.4; }
+.detail-value.empty { color: var(--ink-dim); font-style: italic; font-size: 15px; }
+.detail-footer { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(201,168,76,0.08); display: flex; align-items: center; gap: 0.5rem; }
+.detail-cert { font-family: 'Cormorant Garamond', serif; font-size: 12px; color: var(--ink-dim); letter-spacing: 0.1em; }
+.detail-cert strong { color: var(--gold-dim); font-weight: 400; }
+.spacer { flex: 1; }
+.verified-dot { width: 5px; height: 5px; border-radius: 50%; background: #5A9A6A; }
+.verified-text { font-family: 'Cormorant Garamond', serif; font-size: 10px; letter-spacing: 0.25em; color: #5A9A6A; text-transform: uppercase; }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CTA Section ── */
+.cta-section {
+  max-width: 700px; margin: 2.5rem auto 0; padding: 0 1.5rem 4rem;
+  width: 100%;
+}
+.cta-divider { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem; }
+.cta-divider::before, .cta-divider::after { content: ''; flex: 1; height: 1px; background: var(--gold-line); }
+.cta-divider-text { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 0.3em; color: var(--gold-dim); text-transform: uppercase; white-space: nowrap; }
+
+.cta-card {
+  border: 1px solid var(--gold-line); background: var(--bg-2);
+  padding: 2rem 1.75rem; text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim) 30%, var(--gold) 50%, var(--gold-dim) 70%, transparent);
+}
+.cta-eyebrow { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 0.35em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.6rem; }
+.cta-title { font-size: 20px; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+.cta-desc { font-size: 14px; color: var(--ink-mid); line-height: 1.7; letter-spacing: 0.03em; margin-bottom: 1.75rem; }
+.cta-features { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+.cta-feature { font-size: 13px; color: var(--ink-mid); letter-spacing: 0.04em; }
+.cta-feature::before { content: '◆ '; color: var(--gold); font-size: 8px; vertical-align: middle; }
+.line-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 1rem 2.5rem; background: var(--line-green); color: #fff;
+  border: none; cursor: pointer; text-decoration: none;
+  font-family: 'Noto Serif TC', serif; font-size: 15px; font-weight: 600;
+  letter-spacing: 0.08em; transition: opacity 0.2s, transform 0.15s;
+}
+.line-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.line-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+/* ── Card Images ── */
+.card-detail-inner { display: flex; gap: 1.5rem; align-items: flex-start; }
+.card-images-side { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; width: 160px; }
+.card-detail-data { flex: 1; min-width: 0; }
+.card-img-wrap { border: 1px solid var(--gold-line); overflow: hidden; }
+.card-img-wrap img { width: 100%; display: block; object-fit: cover; aspect-ratio: 3/4; transition: transform 0.3s; cursor: zoom-in; }
+.card-img-wrap img:hover { transform: scale(1.03); }
+.card-img-label { font-family: 'Cormorant Garamond', serif; font-size: 10px; letter-spacing: 0.2em; color: var(--gold-dim); text-transform: uppercase; text-align: center; padding: 5px 0; background: var(--bg-3); }
+.lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 999; align-items: center; justify-content: center; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border: 1px solid var(--gold-line); }
+.lightbox-close { position: fixed; top: 20px; right: 24px; font-size: 28px; color: var(--gold); cursor: pointer; background: none; border: none; line-height: 1; }
+@media (max-width: 480px) { .card-detail-inner { flex-direction: column; } .card-images-side { width: 100%; flex-direction: row; } }
+/* ── Footer ── */
+.site-footer { border-top: 1px solid var(--gold-line); padding: 1.5rem; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 10px; letter-spacing: 0.2em; color: var(--ink-dim); text-transform: uppercase; }
+
+@media (max-width: 600px) {
+  .why-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr 1fr; }
+  .card-row-header { padding: 0.85rem 1rem; gap: 0.5rem; }
+  .card-row-name { font-size: 15px; max-width: 45%; }
+  .card-tag { font-size: 11px; }
+  .grade-badge { min-width: 42px; height: 42px; }
+  .grade-num { font-size: 20px; }
+  .cta-features { gap: 0.75rem; }
+  .cta-card { padding: 1.5rem 1.25rem; }
+  .code-input { font-size: 16px; padding: 1rem 1.25rem; }
+  .lookup-btn { padding: 1rem 1.25rem; font-size: 13px; letter-spacing: 0.15em; }
+  .clear-btn { right: 100px; }
+  main { padding: 2rem 1rem 2rem; }
+  .card-body { padding: 1.25rem 1rem 1.25rem; }
+  .card-header { padding: 1.25rem 1rem 1rem; }
+  .card-footer { padding: 0.9rem 1rem; }
+  .month-toggle { padding: 1rem; }
+  .photo-toggle { padding: 0.75rem 1rem; }
+  .summary-top { padding: 1rem; }
+  .brand-zh { font-size: 20px; }
+}
+@media (max-width: 400px) {
+  .detail-grid { grid-template-columns: 1fr; }
+  .payment-badge { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-glow"></div>
+  <div class="header-ornament">
+    <div class="ornament-line"></div>
+    <div class="ornament-diamond"></div>
+    <div class="ornament-line right"></div>
+  </div>
+  <p class="brand-en">Show Card Restoration &amp; Authentication</p>
+  <h1 class="brand-zh">Show卡修卡鑑定資訊</h1>
+  <p class="brand-tagline">Professional Card Grading &amp; Restoration</p>
+</header>
+
+<main>
+  <p class="lookup-eyebrow">Certificate Lookup</p>
+  <p class="lookup-desc">輸入您的專屬代碼以查詢鑑定報告</p>
+
+  <div class="input-wrap">
+    <input class="code-input" id="codeInput" type="text"
+      placeholder="請輸入查詢代碼（例：SH-001）"
+      autocomplete="off" spellcheck="false" />
+    <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
+    <button class="lookup-btn" id="lookupBtn" onclick="doLookup()">查詢</button>
+  </div>
+
+  <p class="status" id="statusMsg"></p>
+  <div id="resultsContainer"></div>
+</main>
+<section class="why-section">
+  <div class="why-inner">
+    <p class="why-title">為什麼選擇Show卡</p>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="why-icon">🔍</div>
+        <div class="why-label">專業修復技術</div>
+        <div class="why-desc">多年卡牌修復經驗，讓您的卡牌重現最佳狀態</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">🏆</div>
+        <div class="why-label">專業卡牌評估</div>
+        <div class="why-desc">依卡況給予最專業的評估建議與處理方案</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">📋</div>
+        <div class="why-label">專屬代碼查詢</div>
+        <div class="why-desc">專屬代碼即時查詢，鑑定進度一目瞭然</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-divider">
+    <span class="cta-divider-text">立即委託鑑定</span>
+  </div>
+  <div class="cta-card">
+    <p class="cta-eyebrow">Commission Your Cards</p>
+    <h2 class="cta-title">讓您的卡牌獲得最高評價</h2>
+    <p class="cta-desc">專業修復 × 專業卡牌評估，為您的珍藏卡牌創造最高價值<br>立即透過 LINE 聯繫，獲得專屬評估報價</p>
+    <div class="cta-features">
+      <span class="cta-feature">免費諮詢評估</span>
+      
+      
+      <span class="cta-feature">即時進度回報</span>
+    </div>
+    <a class="line-btn" href="https://lin.ee/PPsIzwk" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.070 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+      加入 LINE 立即諮詢
+    </a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  © Show卡修卡鑑定資訊 &nbsp;·&nbsp; 本資料僅供持有人查閱 &nbsp;·&nbsp; 禁止轉載
+</footer>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbzfoo9jJsCSCL3EJKsZGjvvqXplFzyH10OtJSajZn5O4S5b8h3_qAXO178x13Ne0Zc3qQ/exec';
+
+const input     = document.getElementById('codeInput');
+const btn       = document.getElementById('lookupBtn');
+const statusEl  = document.getElementById('statusMsg');
+const container = document.getElementById('resultsContainer');
+
+input.addEventListener('keydown', e => { if (e.key === 'Enter') doLookup(); });
+input.addEventListener('input', () => {
+  document.getElementById('clearBtn').classList.toggle('visible', input.value.length > 0);
+});
+function clearInput() {
+  input.value = '';
+  document.getElementById('clearBtn').classList.remove('visible');
+  document.getElementById('resultsContainer').innerHTML = '';
+  document.getElementById('statusMsg').textContent = '';
+  input.focus();
+}
+
+function setStatus(msg, type = '') {
+  statusEl.textContent = msg;
+  statusEl.className = 'status' + (type ? ' ' + type : '');
+}
+
+function v(d, k) {
+  const val = d[k];
+  return (val !== undefined && val !== null && String(val).trim() !== '') ? String(val).trim() : null;
+}
+
+function paymentBadge(status) {
+  if (!status) return '';
+  const s = status.toLowerCase();
+  let cls = 'pending', label = status;
+  if (s.includes('已付') || s.includes('完成') || s.includes('paid')) cls = 'paid';
+  else if (s.includes('未付') || s.includes('未繳') || s.includes('unpaid')) cls = 'unpaid';
+  return `<span class="payment-badge ${cls}">${label}</span>`;
+}
+
+function detailRow(label, value, full) {
+  return `<div class="detail-row${full ? ' full' : ''}">
+    <span class="detail-label">${label}</span>
+    <span class="detail-value${value ? '' : ' empty'}">${value || '—'}</span>
+  </div>`;
+}
+
+function buildCardRow(d) {
+  const wrap = document.createElement('div');
+  wrap.className = 'card-row';
+
+  const grade = v(d, '鑑定分數');
+  const payment = v(d, '付款狀態');
+
+  const header = document.createElement('button');
+  header.className = 'card-row-header';
+  const company = v(d,'鑑定公司');
+  const status = v(d,'鑑定狀況');
+  const tags = [company, status].filter(Boolean).join('<span class="card-tag-sep">·</span>');
+  header.innerHTML = `
+    <span class="card-row-name">${v(d,'卡片名稱') || '（未填寫）'}</span>
+    <span class="card-row-tags">
+      ${tags ? `<span class="card-tag">${tags}</span>` : ''}
+      ${payment ? paymentBadge(payment) : ''}
+    </span>
+    <div class="grade-badge">
+      <span class="grade-num">${grade || '—'}</span>
+      <span class="grade-sub">grade</span>
+    </div>
+    <span class="card-row-arrow">▼</span>
+  `;
+
+
+
+  const detail = document.createElement('div');
+  detail.className = 'card-detail';
+  detail.innerHTML = `
+    <div class="detail-accent"></div>
+    <div class="detail-grid">
+      ${detailRow('鑑定公司', v(d,'鑑定公司'))}
+      ${detailRow('鑑定速度', v(d,'鑑定速度'))}
+      ${detailRow('鑑定狀況', v(d,'鑑定狀況'))}
+      ${detailRow('卡片編號', v(d,'卡片編號'))}
+      ${detailRow('鑑定費用', v(d,'鑑定費用') ? 'NT$ ' + v(d,'鑑定費用') : null)}
+      ${detailRow('加收金額', v(d,'加收金額') ? 'NT$ ' + v(d,'加收金額') : null)}
+      ${detailRow('付款狀態', v(d,'付款狀態'))}
+      ${detailRow('鑑定分數', v(d,'鑑定分數'))}
+      ${detailRow('備註',     v(d,'備註'), true)}
+    </div>
+    </div>
+    <div class="detail-footer">
+      <span class="detail-cert">查詢代碼&ensp;<strong>${v(d,'查詢代碼') || '—'}</strong></span>
+      <div class="spacer"></div>
+      <div class="verified-dot"></div>
+      <span class="verified-text">Authenticated</span>
+    </div>
+  `;
+
+  header.addEventListener('click', () => {
+    const open = detail.classList.toggle('open');
+    header.classList.toggle('open', open);
+  });
+
+  wrap.appendChild(header);
+  wrap.appendChild(detail);
+  return wrap;
+}
+
+async function doLookup() {
+  const code = input.value.trim().toUpperCase();
+  if (!code) { setStatus('請輸入查詢代碼', 'error'); return; }
+
+  container.innerHTML = '';
+  btn.disabled = true;
+  setStatus('查詢中⋯⋯', 'loading');
+
+  try {
+    const res  = await fetch(`${API_URL}?code=${encodeURIComponent(code)}`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+
+    if (data.error) {
+      setStatus('找不到此代碼，請確認後重新輸入。', 'error');
+      return;
+    }
+
+    const results = Array.isArray(data) ? data : [data];
+    setStatus('');
+
+    const clientName = v(results[0], '客戶名稱') || '客戶';
+
+    const summaryEl = document.createElement('div');
+    summaryEl.className = 'summary-header';
+    summaryEl.innerHTML = `
+      <div class="summary-accent"></div>
+      <div class="summary-top">
+        <span class="summary-name">${clientName}</span>
+        <span class="summary-code">${code}</span>
+      </div>
+      <div class="summary-count">共 ${results.length} 張卡片紀錄</div>
+    `;
+    container.appendChild(summaryEl);
+
+    const groups = {};
+    results.forEach(d => {
+      const sheet = d['_分頁'] || '未分類';
+      if (!groups[sheet]) groups[sheet] = [];
+      groups[sheet].push(d);
+    });
+
+    Object.keys(groups).forEach((sheet, gi) => {
+      const cards = groups[sheet];
+      const groupEl = document.createElement('div');
+      groupEl.className = 'month-group';
+      groupEl.style.animationDelay = (gi * 0.07) + 's';
+
+      const toggle = document.createElement('button');
+      toggle.className = 'month-toggle';
+      toggle.innerHTML = `
+        <div class="month-accent"></div>
+        <span class="month-name">${sheet}</span>
+        <span class="month-count">${cards.length} 張</span>
+        <span class="month-arrow">▼</span>
+      `;
+
+      // Collect all images from cards in this group
+      const groupImgs = [];
+      cards.forEach(d => {
+        if (v(d,'卡片圖片1')) groupImgs.push(v(d,'卡片圖片1'));
+        if (v(d,'卡片圖片2')) groupImgs.push(v(d,'卡片圖片2'));
+      });
+
+      // Photo section
+      const photoToggle = document.createElement('button');
+      photoToggle.className = 'photo-toggle';
+      photoToggle.innerHTML = `
+        <span class="photo-toggle-icon">▶</span>
+        <span class="photo-toggle-label">送鑑定圖片</span>
+        <span class="photo-toggle-count">${groupImgs.length} 張</span>
+      `;
+
+      const photoPanel = document.createElement('div');
+      photoPanel.className = 'photo-panel';
+      groupImgs.forEach((src, idx) => {
+        photoPanel.innerHTML += `<div class="card-img-wrap"><img src="${src}" alt="圖片${idx+1}" onclick="openLightbox('${src}')"><div class="card-img-label">圖片 ${idx+1}</div></div>`;
+      });
+
+      photoToggle.addEventListener('click', () => {
+        const open = photoPanel.classList.toggle('open');
+        photoToggle.classList.toggle('open', open);
+      });
+
+      const list = document.createElement('div');
+      list.className = 'card-list';
+      cards.forEach(d => list.appendChild(buildCardRow(d)));
+
+      toggle.addEventListener('click', () => {
+        const open = list.classList.toggle('open');
+        toggle.classList.toggle('open', open);
+      });
+
+      if (gi === 0) {
+        list.classList.add('open');
+        toggle.classList.add('open');
+      }
+
+      groupEl.appendChild(toggle);
+      if (groupImgs.length > 0) {
+        groupEl.appendChild(photoToggle);
+        groupEl.appendChild(photoPanel);
+      }
+      groupEl.appendChild(list);
+      container.appendChild(groupEl);
+    });
+
+  } catch {
+    setStatus('查詢失敗，請稍後再試。', 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+</script>
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+</body>
+</html>
